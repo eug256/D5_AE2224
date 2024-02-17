@@ -11,7 +11,7 @@ import vallenae as vae
 
 HERE = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 TRADB = HERE / "1p12_Ft_25000.tradb"  # uncompressed
-TRAI = 1.123456e6  # just an example, no magic here
+TRAI = 1  # just an example, no magic here
 
 
 def main():

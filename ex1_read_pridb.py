@@ -11,7 +11,7 @@ import pandas as pd
 import vallenae as vae
 
 HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-PRIDB = os.path.join(HERE, "1p12_Ft_25000.pridb")
+PRIDB = os.path.join(HERE, "databases", "1p12_Ft_25000.pridb")
 
 #%%
 # Open pridb
@@ -26,10 +26,12 @@ print("Set of all channels: ", pridb.channel())
 #%%
 # Read hits to Pandas DataFrame
 # -----------------------------
-df_hits = pridb.read_hits()
-df_hits.to_csv("pridb_output.csv")
+df_hits = pridb.iread_hits(query_filter="TRAI = 1")
+#df_hits.to_csv("pridb_output.csv")
 # Print a few columns
-print(df_hits[["time", "channel", "amplitude", "counts", "energy", "trai"]])
+#print(df_hits.loc[df_hits['trai'] > 0])
+for i in df_hits:
+    print(i[11])
 
 # %%
 # Query Pandas DataFrame
