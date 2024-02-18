@@ -34,15 +34,21 @@ class Form(QDialog):
         self.button = QPushButton("Show TRAI")
         self.table = QTableWidget()
         self.graph = pg.PlotWidget()
-        self._open_file_name_label = QLabel()
-        self._open_file_name_label.setText(self._tradb_file_location)
-        self._open_file_name_label.setFrameStyle(frame_style)
-        self._open_file_name_button = QPushButton("Select tradb file")
+        self._open_tradb_label = QLabel()
+        self._open_tradb_label.setText(self._tradb_file_location)
+        self._open_tradb_label.setFrameStyle(frame_style)
+        self._open_tradb_button = QPushButton("Select tradb file")
+        self._open_pridb_label = QLabel()
+        self._open_pridb_label.setText(self._pridb_file_location)
+        self._open_pridb_label.setFrameStyle(frame_style)
+        self._open_pridb_button = QPushButton("Select pridb file")
         self.style_graph()
         # Create layout and add widgets
         layout = QVBoxLayout()
-        layout.addWidget(self._open_file_name_button)
-        layout.addWidget(self._open_file_name_label)
+        layout.addWidget(self._open_tradb_button)
+        layout.addWidget(self._open_tradb_label)
+        layout.addWidget(self._open_pridb_button)
+        layout.addWidget(self._open_pridb_label)
         layout.addWidget(self.edit)
         layout.addWidget(self.button)
         layout.addWidget(self.table)
@@ -52,7 +58,8 @@ class Form(QDialog):
         self.setLayout(layout)
         # Add button signal to greetings slot
         self.button.clicked.connect(self.calculate_trai)
-        self._open_file_name_button.clicked.connect(self.set_open_file_name)
+        self._open_tradb_button.clicked.connect(self.set_open_tradb)
+        self._open_pridb_button.clicked.connect(self.set_open_pridb)
 
     def create_empty_table(self):
         data = ["time", "channel", "param_id", "amplitude", "duration", "energy", "rms", "set_id", "threshold", "rise_time", "signal_strength", "counts"]
@@ -76,9 +83,8 @@ class Form(QDialog):
     # Calculates parameters
     @Slot()
     def calculate_trai(self):
-        HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-        PRIDB = os.path.join(HERE, "databases", "1p12_Ft_25000.pridb")
-        TRADB = os.path.join(HERE, "databases", "1p12_Ft_25000.tradb")
+        PRIDB = self._pridb_file_location
+        TRADB = self._tradb_file_location
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(self.edit.text())
 
@@ -100,13 +106,28 @@ class Form(QDialog):
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
 
     @Slot()
-    def set_open_file_name(self):
+    def set_open_tradb(self):
         fileName, _ = QFileDialog.getOpenFileName(self, "Select tradb file",
-                                                  self._open_file_name_label.text(),
+                                                  self._open_tradb_label.text(),
                                                   "Tradb (*.tradb)", "")
         if fileName:
-            self._open_file_name_label.setText(fileName)
+            self._open_tradb_label.setText(fileName)
         self._tradb_file_location = fileName
+        with open('settings.yml', 'w') as file:
+            databases = {
+                'tradb': self._tradb_file_location,
+                'pridb': self._pridb_file_location
+            }
+            yaml.dump(databases, file, sort_keys=False)
+
+    @Slot()
+    def set_open_pridb(self):
+        fileName, _ = QFileDialog.getOpenFileName(self, "Select pridb file",
+                                                  self._open_tradb_label.text(),
+                                                  "Pridb (*.pridb)", "")
+        if fileName:
+            self._open_pridb_label.setText(fileName)
+        self._pridb_file_location = fileName
         with open('settings.yml', 'w') as file:
             databases = {
                 'tradb': self._tradb_file_location,
