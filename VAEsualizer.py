@@ -3,7 +3,7 @@ import vallenae as vae
 import os
 import pyqtgraph as pg
 from PySide6.QtGui import QColor
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 import yaml
 
@@ -211,8 +211,11 @@ if __name__ == '__main__':
 
     # Create the Qt Application
     app = QApplication(sys.argv)
-    # Create and show the form
+    # Create and show the form 
     form = Form()
+    form.setWindowFlag(Qt.WindowType.WindowMaximizeButtonHint, True)
+    form.setWindowFlag(Qt.WindowType.WindowMinimizeButtonHint, True)
+    form.setWindowTitle("VAEsualizer")
     form.show()
     
     # Run the main Qt loop
