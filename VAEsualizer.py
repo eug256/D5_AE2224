@@ -49,7 +49,6 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
         self.create_empty_table()
         self.create_db_selector()      
-        self.create_data()
         self.create_enter_trai()
         self.create_left_side()
         self.style_graph()
@@ -134,13 +133,6 @@ class Form(QDialog):
         layout.addWidget(self._enter_trai)
         layout.addWidget(self.table)
         self._left_side.setLayout(layout)
-
-    def create_data(self):
-        self._data_box = QGroupBox()
-        layout = QHBoxLayout()
-        layout.addWidget(self.table)
-        layout.addWidget(self.graph)
-        self._data_box.setLayout(layout)
 
     def style_graph(self):
         self.graph.setBackground('w')
