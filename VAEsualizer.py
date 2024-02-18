@@ -24,9 +24,14 @@ class Form(QDialog):
                     'pridb': None
                 }
                 yaml.dump(databases, file, sort_keys=False)
+                self._tradb_file_location = None
+                self._pridb_file_location = None
 
 
         # Create widgets
+
+          
+        
         self._open_files_path = ''
         frame_style = QFrame.Sunken | QFrame.Panel
 
@@ -42,9 +47,20 @@ class Form(QDialog):
         self._open_pridb_label.setText(self._pridb_file_location)
         self._open_pridb_label.setFrameStyle(frame_style)
         self._open_pridb_button = QPushButton("Select pridb file")
+        self.create_empty_table()
+        self.create_db_selector()      
+        self.create_data()
+        self.create_enter_trai()
+        self.create_left_side()
         self.style_graph()
         # Create layout and add widgets
-        layout = QVBoxLayout()
+        main_layout = QGridLayout()
+        main_layout.addWidget(self._database_select, 0, 0, 1, 4)
+        main_layout.addWidget(self.graph, 1, 1)
+        main_layout.addWidget(self._left_side, 1, 0)
+        main_layout.setColumnStretch(0, 0)
+        main_layout.setColumnStretch(1, 20)
+        '''
         layout.addWidget(self._open_tradb_button)
         layout.addWidget(self._open_tradb_label)
         layout.addWidget(self._open_pridb_button)
@@ -53,9 +69,10 @@ class Form(QDialog):
         layout.addWidget(self.button)
         layout.addWidget(self.table)
         layout.addWidget(self.graph)
-        self.create_empty_table()
+        '''
+        
         # Set dialog layout
-        self.setLayout(layout)
+        self.setLayout(main_layout)
         # Add button signal to greetings slot
         self.button.clicked.connect(self.calculate_trai)
         self._open_tradb_button.clicked.connect(self.set_open_tradb)
@@ -66,9 +83,64 @@ class Form(QDialog):
         self.table.setRowCount(12)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
+        self.table.setFixedWidth(350)
         for (i, name) in enumerate(data):
             data_str = QTableWidgetItem(name)
             self.table.setItem(i, 0, data_str)
+
+    def create_db_selector(self):
+        self.create_pridb_box()
+        self.create_tradb_box()
+        self._database_select = QGroupBox("Select database files")
+        layout = QHBoxLayout()
+        layout.addWidget(self._pridb_box)
+        #layout.addWidget(self._open_pridb_label)
+        layout.addWidget(self._tradb_box)
+        #layout.addWidget(self._open_tradb_label)
+        self._database_select.setLayout(layout)
+
+    def create_pridb_box(self):
+        self._pridb_box = QGroupBox("")
+        layout = QVBoxLayout()
+        layout.addWidget(self._open_pridb_button)
+        layout.addWidget(self._open_pridb_label)
+        self._pridb_box.setLayout(layout)
+
+    def create_tradb_box(self):
+        self._tradb_box = QGroupBox("")
+        layout = QVBoxLayout()
+        layout.addWidget(self._open_tradb_button)
+        layout.addWidget(self._open_tradb_label)
+        self._tradb_box.setLayout(layout)
+
+    def create_db_label(self):
+        self._database_label = QGroupBox()
+        layout = QHBoxLayout()
+        layout.addWidget(self._open_pridb_label)
+        layout.addWidget(self._open_tradb_label)
+        self._database_label.setLayout(layout)
+
+    def create_enter_trai(self):
+        self._enter_trai = QGroupBox("Enter TRAI")
+        layout = QHBoxLayout()
+        layout.addWidget(self.edit)
+        layout.addWidget(self.button)
+        self._enter_trai.setLayout(layout)
+        self._enter_trai.setFixedWidth(350)
+
+    def create_left_side(self):
+        self._left_side = QGroupBox()
+        layout = QVBoxLayout()
+        layout.addWidget(self._enter_trai)
+        layout.addWidget(self.table)
+        self._left_side.setLayout(layout)
+
+    def create_data(self):
+        self._data_box = QGroupBox()
+        layout = QHBoxLayout()
+        layout.addWidget(self.table)
+        layout.addWidget(self.graph)
+        self._data_box.setLayout(layout)
 
     def style_graph(self):
         self.graph.setBackground('w')
