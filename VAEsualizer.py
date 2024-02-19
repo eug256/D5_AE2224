@@ -79,13 +79,18 @@ class Form(QDialog):
 
     def create_empty_table(self):
         data = ["time", "channel", "param_id", "amplitude", "duration", "energy", "rms", "set_id", "threshold", "rise_time", "signal_strength", "counts"]
+        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-"]
         self.table.setRowCount(12)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
         self.table.setFixedWidth(350)
+        self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         for (i, name) in enumerate(data):
             data_str = QTableWidgetItem(name)
             self.table.setItem(i, 0, data_str)
+        for (i, unit) in enumerate(unit):
+            unit_str = QTableWidgetItem(unit)
+            self.table.setItem(i, 2, unit_str)
 
     def create_db_selector(self):
         self.create_pridb_box()
@@ -138,10 +143,9 @@ class Form(QDialog):
         self.graph.setBackground('w')
         self.pen_main = pg.mkPen(color=(0, 0, 255))
         self.pen_treshold = pg.mkPen(color=(255,0,0), style=Qt.DashLine)
-        self.graph.setTitle(f"Amplitude VS Time", color=(0,0,0), size="20px")
-        styles = {'color':(0,0,0), 'font-size':'20px'}
-        self.graph.setLabel('left', "Amplitude (Unit?)", **styles)
-        self.graph.setLabel('bottom', "Time (Unit?)", **styles)
+        self.graph.setTitle("Amplitude VS Time", color=(255,0,0), size="20px")
+        self.graph.setLabel('left', "<font color='blue'>Amplitude", "V")
+        self.graph.setLabel('bottom', "<font color='blue'>Time", "s")
         self.graph.showGrid(x=True, y=True)
 
     # Calculates parameters
@@ -149,14 +153,15 @@ class Form(QDialog):
     def calculate_trai(self):
         PRIDB = self._pridb_file_location
         TRADB = self._tradb_file_location
+        trai = int(self.edit.text())
         with vae.io.TraDatabase(TRADB) as tradb:
-            y, t = tradb.read_wave(self.edit.text())
+            y, t = tradb.read_wave(trai)
 
         self.graph.clear()  
-        self.graph.setTitle(f"Amplitude VS Time, TRAI={self.edit.text()}", color=(0,0,0), size="20px")
+        self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
         pridb = vae.io.PriDatabase(PRIDB)
-        df_hits = pridb.iread_hits(query_filter=f"TRAI = {self.edit.text()}")
+        df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
 
         for i in df_hits:
             for (index, data_value) in enumerate(i[0:12]):
