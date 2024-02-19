@@ -29,24 +29,7 @@ class Form(QDialog):
 
 
         # Create widgets
-
-          
-        
-        self._open_files_path = ''
-        frame_style = QFrame.Sunken | QFrame.Panel
-
-        self.edit = QLineEdit()
-        self.button = QPushButton("Show TRAI")
-        self.table = QTableWidget()
-        self.graph = pg.PlotWidget()
-        self._open_tradb_label = QLabel()
-        self._open_tradb_label.setText(self._tradb_file_location)
-        self._open_tradb_label.setFrameStyle(frame_style)
-        self._open_tradb_button = QPushButton("Select tradb file")
-        self._open_pridb_label = QLabel()
-        self._open_pridb_label.setText(self._pridb_file_location)
-        self._open_pridb_label.setFrameStyle(frame_style)
-        self._open_pridb_button = QPushButton("Select pridb file")
+        self.create_bunch_of_stuff()
         self.create_empty_table()
         self.create_db_selector()      
         self.create_enter_trai()
@@ -59,23 +42,28 @@ class Form(QDialog):
         main_layout.addWidget(self._left_side, 1, 0)
         main_layout.setColumnStretch(0, 0)
         main_layout.setColumnStretch(1, 20)
-        '''
-        layout.addWidget(self._open_tradb_button)
-        layout.addWidget(self._open_tradb_label)
-        layout.addWidget(self._open_pridb_button)
-        layout.addWidget(self._open_pridb_label)
-        layout.addWidget(self.edit)
-        layout.addWidget(self.button)
-        layout.addWidget(self.table)
-        layout.addWidget(self.graph)
-        '''
-        
+
         # Set dialog layout
         self.setLayout(main_layout)
         # Add button signal to greetings slot
         self.button.clicked.connect(self.calculate_trai)
         self._open_tradb_button.clicked.connect(self.set_open_tradb)
         self._open_pridb_button.clicked.connect(self.set_open_pridb)
+
+    def create_bunch_of_stuff(self):
+        frame_style = QFrame.Sunken | QFrame.Panel
+        self.edit = QLineEdit()
+        self.button = QPushButton("Show TRAI")
+        self.table = QTableWidget()
+        self.graph = pg.PlotWidget()
+        self._open_tradb_label = QLabel()
+        self._open_tradb_label.setText(self._tradb_file_location)
+        self._open_tradb_label.setFrameStyle(frame_style)
+        self._open_tradb_button = QPushButton("Select tradb file")
+        self._open_pridb_label = QLabel()
+        self._open_pridb_label.setText(self._pridb_file_location)
+        self._open_pridb_label.setFrameStyle(frame_style)
+        self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
         data = ["time", "channel", "param_id", "amplitude", "duration", "energy", "rms", "set_id", "threshold", "rise_time", "signal_strength", "counts"]
