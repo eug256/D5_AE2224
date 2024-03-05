@@ -1,6 +1,7 @@
 import sys
 import vallenae as vae
 import os
+import math
 import pyqtgraph as pg
 from PySide6.QtGui import QColor
 from PySide6.QtCore import *
@@ -135,6 +136,15 @@ class Form(QDialog):
         self.graph.setLabel('left', "<font color='blue'>Amplitude", "V")
         self.graph.setLabel('bottom', "<font color='blue'>Time", "s")
         self.graph.showGrid(x=True, y=True)
+        
+    def convert_to_db(self, x):
+        self.graph.setLabel('left', "<font color='blue'>Amplitude", "dBV")
+        for i in range(len(x)):
+            try:
+                x[i] = 20*math.log(x[i]/1e-6, 10)
+            except ValueError:
+                x[i] = -100
+        return x
 
     # Calculates parameters
     @Slot()
@@ -144,13 +154,28 @@ class Form(QDialog):
         trai = int(self.edit.text())
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(trai)
+            print(tradb.columns())
+
+        '''
+        temp = []
+        for amplitude in y:
+            if vae.features.amplitude_to_db(amplitude) != 0:
+                temp.append(vae.features.amplitude_to_db(amplitude))
+            else:
+                temp.append(-1)
+        y = temp
+        '''
+        y = self.convert_to_db(y)
+        
+        
 
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
         pridb = vae.io.PriDatabase(PRIDB)
         df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
-
+        print(pridb.columns())
+        print(pridb.fieldinfo())
         for i in df_hits:
             for (index, data_value) in enumerate(i[0:12]):
                 data_value_widget = QTableWidgetItem()
