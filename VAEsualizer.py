@@ -165,8 +165,7 @@ class Form(QDialog):
                 temp.append(-1)
         y = temp
         '''
-        y = self.convert_to_db(y)
-        
+      # y = self.convert_to_db(y)
         
 
         self.graph.clear()  
