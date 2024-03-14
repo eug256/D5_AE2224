@@ -36,7 +36,7 @@ class Form(QDialog):
         self.create_enter_trai()
         self.create_left_side()
         self.style_graph()
-        # Create layout and add widgets
+        # Create layout and add widgetbrew install python@3.10s
         main_layout = QGridLayout()
         main_layout.addWidget(self._database_select, 0, 0, 1, 4)
         main_layout.addWidget(self.graph, 1, 1)
