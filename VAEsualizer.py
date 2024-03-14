@@ -7,6 +7,8 @@ from PySide6.QtGui import QColor
 from PySide6.QtCore import *
 from PySide6.QtWidgets import *
 import yaml
+from scipy.fft import fft, fftfreq
+import numpy as np
 
 class Form(QDialog):
 
@@ -36,7 +38,12 @@ class Form(QDialog):
         self.create_enter_trai()
         self.create_left_side()
         self.style_graph()
-        # Create layout and add widgetbrew install python@3.10s
+
+        # Create a layout for frequency plot
+        self.freq_layout = QVBoxLayout()
+        self.freq_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Create main layout
         main_layout = QGridLayout()
         main_layout.addWidget(self._database_select, 0, 0, 1, 4)
         main_layout.addWidget(self.graph, 1, 1)
@@ -46,6 +53,7 @@ class Form(QDialog):
 
         # Set dialog layout
         self.setLayout(main_layout)
+
         # Add button signal to greetings slot
         self.button.clicked.connect(self.calculate_trai)
         self._open_tradb_button.clicked.connect(self.set_open_tradb)
@@ -87,9 +95,7 @@ class Form(QDialog):
         self._database_select = QGroupBox("Select database files")
         layout = QHBoxLayout()
         layout.addWidget(self._pridb_box)
-        #layout.addWidget(self._open_pridb_label)
         layout.addWidget(self._tradb_box)
-        #layout.addWidget(self._open_tradb_label)
         self._database_select.setLayout(layout)
 
     def create_pridb_box(self):
@@ -105,13 +111,6 @@ class Form(QDialog):
         layout.addWidget(self._open_tradb_button)
         layout.addWidget(self._open_tradb_label)
         self._tradb_box.setLayout(layout)
-
-    def create_db_label(self):
-        self._database_label = QGroupBox()
-        layout = QHBoxLayout()
-        layout.addWidget(self._open_pridb_label)
-        layout.addWidget(self._open_tradb_label)
-        self._database_label.setLayout(layout)
 
     def create_enter_trai(self):
         self._enter_trai = QGroupBox("Enter TRAI")
@@ -155,19 +154,7 @@ class Form(QDialog):
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(trai)
             print(tradb.columns())
-
-        '''
-        temp = []
-        for amplitude in y:
-            if vae.features.amplitude_to_db(amplitude) != 0:
-                temp.append(vae.features.amplitude_to_db(amplitude))
-            else:
-                temp.append(-1)
-        y = temp
-        '''
-      # y = self.convert_to_db(y)
         
-
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
@@ -185,6 +172,34 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main, name="data")
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
+        
+        yf = fft(y)
+        dt = t[1] - t[0]
+        freq = fftfreq(len(y), dt)
+        freq_0 = []
+        amplitude_spectrum_0 = []
+        amplitude_spectrum = 2*np.abs(yf)
+        for i in range(len(freq)):
+            if freq[i] >= 0:
+                freq_0.append(freq[i])
+                amplitude_spectrum_0.append(amplitude_spectrum[i])
+
+        # Create a new PlotWidget for frequency plot
+        freq_graph = pg.PlotWidget()
+        freq_graph.setBackground('w')
+        freq_graph.setTitle("Amplitude VS Frequency", color=(255,0,0), size="20px")
+        freq_graph.setLabel('left', "<font color='blue'>Amplitude", "V")
+        freq_graph.setLabel('bottom', "<font color='blue'>Frequency", "Hz")
+        freq_graph.showGrid(x=True, y=True)
+        freq_graph.plot(freq_0, amplitude_spectrum_0, pen=self.pen_main)
+
+        # Clear the layout and add the frequency PlotWidget
+        for i in reversed(range(self.freq_layout.count())): 
+            self.freq_layout.itemAt(i).widget().setParent(None) 
+        self.freq_layout.addWidget(freq_graph)
+
+        # Refresh the main layout
+        self.layout().addLayout(self.freq_layout, 1, 2)
 
     @Slot()
     def set_open_tradb(self):
@@ -217,7 +232,6 @@ class Form(QDialog):
             yaml.dump(databases, file, sort_keys=False)
 
 if __name__ == '__main__':
-
     # Create the Qt Application
     app = QApplication(sys.argv)
     # Create and show the form 
