@@ -169,7 +169,7 @@ class Form(QDialog):
                 self.table.setItem(index, 1, data_value_widget)
                 if index == 8: 
                     self.graph.addLegend()
-                    self.graph.plot(t, y, pen=self.pen_main, name="data")
+                    self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
         
