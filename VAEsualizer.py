@@ -158,6 +158,10 @@ class Form(QDialog):
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
+
+        scaled_var = np.var(y)*10**10
+        print(scaled_var)
+
         pridb = vae.io.PriDatabase(PRIDB)
         df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
         print(pridb.columns())
@@ -172,10 +176,6 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
-
-        scaled_var = np.var(y)*10**10
-        print(scaled_var)
-
         yf = fft(y)
         dt = t[1] - t[0]
         freq = fftfreq(len(y), dt)
