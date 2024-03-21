@@ -75,14 +75,14 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
-        data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts per rise time"]
+        self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts per rise time"]
         unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-", "1/µs"]
         self.table.setRowCount(14)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
         self.table.setFixedWidth(350)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        for (i, name) in enumerate(data):
+        for (i, name) in enumerate(self.data):
             data_str = QTableWidgetItem(name)
             self.table.setItem(i, 0, data_str)
         for (i, unit) in enumerate(unit):
@@ -167,8 +167,10 @@ class Form(QDialog):
         df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
         #print(pridb.columns())
         #print(pridb.fieldinfo())
+        self.data_array = dict()
         for i in df_hits:
             for (index, data_value) in enumerate(i[0:12]):
+                self.data_array[self.data[index]] = data_value
                 data_value_widget = QTableWidgetItem()
                 data_value_widget.setData(Qt.DisplayRole, data_value)
                 self.table.setItem(index, 1, data_value_widget)
@@ -179,7 +181,11 @@ class Form(QDialog):
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
             data_value_widget = QTableWidgetItem(str(i[11]/i[9]))
             self.table.setItem(13, 1, data_value_widget)
-            
+            self.data_array[self.data[12]] = round(np.var(y)*10**10,2)
+            self.data_array[self.data[13]] = i[11]/i[9]
+        
+        #print(self.data_array)
+        
         yf = fft(y)
         dt = t[1] - t[0]
         freq = fftfreq(len(y), dt)
