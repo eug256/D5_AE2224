@@ -75,9 +75,9 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
-        data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10"]
-        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-"]
-        self.table.setRowCount(13)
+        data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts per rise time"]
+        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-", "1/µs"]
+        self.table.setRowCount(14)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
         self.table.setFixedWidth(350)
@@ -178,6 +178,9 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
+            data_value_widget = QTableWidgetItem(str(i[11]/i[9]))
+            self.table.setItem(13, 1, data_value_widget)
+            
         yf = fft(y)
         dt = t[1] - t[0]
         freq = fftfreq(len(y), dt)
