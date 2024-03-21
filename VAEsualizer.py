@@ -159,8 +159,8 @@ class Form(QDialog):
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
         #calculate a scaled, rounded variance of each waveform
-        scaled_var = round(np.var(y)*10**10,2)
-        data_value_widget = QTableWidgetItem(str(scaled_var))
+        scaled_var = np.var(y)*10**10
+        data_value_widget = QTableWidgetItem(str(round(scaled_var,2)))
         #print(data_value_widget)
         self.table.setItem(12, 1, data_value_widget)
         
@@ -180,11 +180,11 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
-            logNoverlogRiseTime = np.log(i[11])/np.log(i[9]/10**(-4))
-            data_value_widget = QTableWidgetItem(str(logNoverlogRiseTime ))
+            logNoverlogRiseTime = np.log10(i[11])/np.log10(i[9]/10**(-8))
+            data_value_widget = QTableWidgetItem(str(round(logNoverlogRiseTime,5)))
             self.table.setItem(13, 1, data_value_widget)
-            self.data_array[self.data[12]] = round(np.var(y)*10**10,2)
-            self.data_array[self.data[13]] = round(logNoverlogRiseTime,2) 
+            self.data_array[self.data[12]] = scaled_var
+            self.data_array[self.data[13]] = logNoverlogRiseTime
         
         #print(self.data_array)
         
