@@ -18,7 +18,7 @@ trai_max = max(trai)
 
 pridb = vae.io.PriDatabase(PRIDB)
 df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
-fields = ['Amplitude', 'Energy', 'Rise_time', 'Count_(log10)', 'Max_freq', 'Variance'] 
+fields = ['Amplitude', 'Energy', 'Rise_time', 'Count/log(RT e4)', 'Max_freq', 'Variance'] 
 total_data = []
 
 for i in df_hits:
@@ -36,7 +36,7 @@ for i in df_hits:
             freq_0.append(freq[j])
             amplitude_spectrum_0.append(amplitude_spectrum[j])
     
-    total_data.append([i[3],i[5],i[9],np.log10(i[11]),max(amplitude_spectrum_0),round(np.var(y)*10**10,2)])
+    total_data.append([i[3],i[5],i[9],i[11]/np.log(i[9]*10000),max(amplitude_spectrum_0),round(np.var(y)*10**10,2)])
 
     
 with open(f'{trai_min}-{trai_max}.csv', 'w', newline='') as f:
