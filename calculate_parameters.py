@@ -36,9 +36,11 @@ for i in df_hits:
             freq_0.append(freq[j])
             amplitude_spectrum_0.append(amplitude_spectrum[j])
     
+    if i[11] == 0:
+        continue
+        
     total_data.append([i[3],i[5],i[9],np.log10(i[11]),max(amplitude_spectrum_0),round(np.var(y)*10**10,2)])
 
-print(total_data)
     
 with open(f'{trai_min}-{trai_max}.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
