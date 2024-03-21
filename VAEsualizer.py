@@ -76,7 +76,7 @@ class Form(QDialog):
 
     def create_empty_table(self):
         data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10"]
-        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-"]
+        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV^2"]
         self.table.setRowCount(13)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
@@ -158,6 +158,7 @@ class Form(QDialog):
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
+        #calculate a scaled, rounded variance of each waveform
         scaled_var = round(np.var(y)*10**10,2)
         data_value_widget = QTableWidgetItem(str(scaled_var))
         #print(data_value_widget)
