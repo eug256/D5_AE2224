@@ -75,7 +75,7 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
-        self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts/log(rise time)"]
+        self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts/log(RT e4)"]
         unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "N/dB"]
         self.table.setRowCount(14)
         self.table.setColumnCount(3)
