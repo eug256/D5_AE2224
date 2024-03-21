@@ -75,8 +75,8 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
-        self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts per rise time"]
-        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "1/µs"]
+        self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "log(Counts)/log(rise time)"]
+        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "dB/dB"]
         self.table.setRowCount(14)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
@@ -180,10 +180,11 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
-            data_value_widget = QTableWidgetItem(str(i[11]/i[9]))
+            logNoverlogRiseTime = np.log(i[11])/np.log(i[9]/10**(-4))
+            data_value_widget = QTableWidgetItem(str(logNoverlogRiseTime ))
             self.table.setItem(13, 1, data_value_widget)
             self.data_array[self.data[12]] = round(np.var(y)*10**10,2)
-            self.data_array[self.data[13]] = i[11]/i[9]
+            self.data_array[self.data[13]] = round(logNoverlogRiseTime,2) 
         
         #print(self.data_array)
         
