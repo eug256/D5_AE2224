@@ -158,6 +158,7 @@ class Form(QDialog):
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
+        #calculate a scaled, rounded variance of each waveform
         scaled_var = round(np.var(y)*10**10,2)
         data_value_widget = QTableWidgetItem(str(scaled_var))
         #print(data_value_widget)
