@@ -180,6 +180,8 @@ class Form(QDialog):
                     self.graph.plot(t, y, pen=self.pen_main,name="data", symbol="o",symbolSize=4)
                     self.graph.plot(t, len(t)*[data_value], pen=self.pen_treshold, name="treshold")
                     self.graph.plot(t, len(t)*[-data_value], pen=self.pen_treshold)
+            
+            # ignore waves with count 1 to avoid infinitely small rise times
             if i[11] > 1:
                 CountsoverlogRiseTime = i[11]/np.log10(i[9]/10**(-8))
             else:
