@@ -75,7 +75,7 @@ class Form(QDialog):
         self._open_pridb_button = QPushButton("Select pridb file")
 
     def create_empty_table(self):
-        data = ["time", "channel", "param_id", "amplitude", "duration", "energy", "rms", "set_id", "threshold", "rise_time", "signal_strength", "counts", "variance E10"]
+        data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10"]
         unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-"]
         self.table.setRowCount(13)
         self.table.setColumnCount(3)
@@ -153,19 +153,21 @@ class Form(QDialog):
         trai = int(self.edit.text())
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(trai)
-            print(tradb.columns())
+            #print(tradb.columns())
         
         self.graph.clear()  
         self.graph.setTitle(f"Amplitude VS Time, TRAI={trai}", color=(255,0,0), size="20px")
 
-
         scaled_var = np.var(y)*10**10
-        print(scaled_var)
-
+        #print(scaled_var)
+        data_value_widget = QTableWidgetItem(str(scaled_var))
+        #print(data_value_widget)
+        self.table.setItem(12, 1, data_value_widget)
+        
         pridb = vae.io.PriDatabase(PRIDB)
         df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
-        print(pridb.columns())
-        print(pridb.fieldinfo())
+        #print(pridb.columns())
+        #print(pridb.fieldinfo())
         for i in df_hits:
             for (index, data_value) in enumerate(i[0:12]):
                 data_value_widget = QTableWidgetItem()
