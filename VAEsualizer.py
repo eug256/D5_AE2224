@@ -160,7 +160,6 @@ class Form(QDialog):
 
 
         scaled_var = np.var(y)*10**10
-        print(scaled_var)
 
         pridb = vae.io.PriDatabase(PRIDB)
         df_hits = pridb.iread_hits(query_filter=f"TRAI = {trai}")
