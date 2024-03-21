@@ -76,7 +76,7 @@ class Form(QDialog):
 
     def create_empty_table(self):
         self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts per rise time"]
-        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "-", "1/µs"]
+        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "1/µs"]
         self.table.setRowCount(14)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
