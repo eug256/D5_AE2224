@@ -6,7 +6,7 @@ from sklearn.datasets import make_classification
 from sklearn.cluster import AffinityPropagation
 
 # initialize the data set we'll work with
-training_data = parameters(100)
+training_data = parameters(1000)
 # define the model
 model = AffinityPropagation(damping=0.7)
 

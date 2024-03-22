@@ -21,7 +21,6 @@ optics_clusters = unique(optics_result)
 for optics_cluster in optics_clusters:
     # get data points that fall in this cluster
     index = where(optics_result == optics_clusters)
-    print(index[0])
     # make the plot
     for i in index[0]:
         pyplot.scatter(training_data[i][4], training_data[i][0])
