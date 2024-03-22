@@ -3,8 +3,11 @@ import vallenae as vae
 import numpy as np
 from scipy.fft import fft, fftfreq
 import csv
+import time
 
-def parameters(trai_input, create_csv=False):
+def parameters(trai_input, create_csv=False, timer=False):
+    if timer == True:
+        start = time.time()
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
         TRADB = results['tradb']
@@ -45,5 +48,8 @@ def parameters(trai_input, create_csv=False):
             
             write.writerow(fields)
             write.writerows(total_data)
-        
+    if timer == True:
+        end = time.time()
+        print(end - start)
+    
     return total_data
