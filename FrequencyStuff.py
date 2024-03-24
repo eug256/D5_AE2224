@@ -1,5 +1,4 @@
 # to do in this file:
-# - create a clear structure with functions and such
 # - iterate over all the samples
 # - calculate the frequencies
 
@@ -28,43 +27,66 @@ TRADB = os.path.join(HERE, "1p12_Ft_25000.tradb")
 pridb = vae.io.PriDatabase(PRIDB)
 tradb = vae.io.TraDatabase(TRADB)
 
-df_hits = pridb.iread_hits(query_filter="TRAI = 1")
+def fourierT(y,t):
+    yf = fft(y)
+    dt = t[1] - t[0]
+    freq = fftfreq(len(y), dt)
+    freq_0 = []
+    amplitude_spectrum_0 = []
+    amplitude_spectrum = 2*np.abs(yf)
+    for i in range(len(freq)):
+        if freq[i] >= 0:
+            freq_0.append(freq[i])
+            amplitude_spectrum_0.append(amplitude_spectrum[i])
 
-y, t = tradb.read_wave(1)
+    return freq_0, amplitude_spectrum_0
 
-# reduce the size of the signal
 
-duration = [item[4] for item in df_hits][0]
+if __name__ == '__main__':
 
-margin = 50
-    
-start = np.where(t == 0)[0][0]
-start -= margin
-end = np.where(t >= duration)[0][0]
-end += margin
+    first_time = True
 
-# truncate the signal to only include the duration with some margin
+    #specify time to run in seconds
+    runtime = 60
 
-"""
-y = y[start:end]
-t = t[start:end]
-"""
+    start = time.time()
 
-# calculate the fft
+    run = True
+    while run:
+        try:
+            existing_file = pd.read_csv('peaks.csv')
+            last_entry = existing_file["trai"].iloc[-1]
+            samples = range(last_entry+1,last_entry+10001)
+            first_time = False
+        except:
+            samples = range(1,10000)
+            
+        peak_frequencies = []
+        
+        for n in samples:
+            try:
+                df_hits = pridb.iread_hits(query_filter=f"TRAI = {n}")
+            except:
+                run = False
+            y,t = tradb.read_wave(n)
+            
+            a,b = fourierT(y,t)
+            
+            PeakFreq = a[b.index(max(b))]
+            peak_frequencies.append(PeakFreq)
+            
+            if n%1000 == 0:
+                print(n)
+                
+        peak_frequencies = pd.DataFrame({"trai": samples, "peak_frequencies": peak_frequencies})
+        if first_time:
+            peak_frequencies.to_csv('peaks.csv', mode='a', index=False)
+        else:
+            peak_frequencies.to_csv('peaks.csv', mode='a', index=False, header=False)
 
-yf = fft(y)
-dt = t[1] - t[0]
-freq = fftfreq(len(y), dt)
-freq_0 = []
-amplitude_spectrum_0 = []
-amplitude_spectrum = 2*np.abs(yf)
-for i in range(len(freq)):
-    if freq[i] >= 0:
-        freq_0.append(freq[i])
-        amplitude_spectrum_0.append(amplitude_spectrum[i])
+        now = time.time()
+        if now-start >= runtime:
+            run = False
 
-# plotting the fft with pyplot
 
-plt.figure()
-plt.plot(freq_0, amplitude_spectrum_0)
-plt.show()
+        
