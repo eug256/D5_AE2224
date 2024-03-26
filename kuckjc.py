@@ -6,8 +6,9 @@ from matplotlib import pyplot as plt
 import matplotlib
 
 # Initialize the data set we'll work with
-trai = 100
-df = parameters(trai)
+trai_start = 100
+trai_end = 200
+df = parameters(trai_start,trai_end)
 
 # Initialize DBSCAN with desired parameters
 dbscan_opt = DBSCAN(eps=50, min_samples=10)
