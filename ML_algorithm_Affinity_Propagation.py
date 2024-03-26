@@ -5,9 +5,11 @@ from matplotlib import pyplot
 from sklearn.datasets import make_classification
 from sklearn.cluster import AffinityPropagation
 import time
+from sklearn.cluster import AffinityPropagation, k_means
 
 # Start timer
 start_time = time.perf_counter()
+
 
 # initialize the data set we'll work with
 training_data = parameters(2700,3000)
@@ -29,14 +31,18 @@ for cluster in clusters:
     index = where(result == cluster)
     # make the plot
     for i in index[0]:
-        pyplot.scatter(training_data[i][1], training_data[i][5])
+        df=k_means.labels_
+
+        # Plotting resulting clusters
+        colors=['purple','red','blue','green']
+        pyplot.scatter(training_data[i][4], training_data[i][0], c=df['KMeans_labels'],cmap=pyplot.colors.ListedColormap(colors))
 
 # End timer
 end_time = time.perf_counter()
 
 # Calculate elapsed time
 elapsed_time = end_time - start_time
-print("Elapsed time: ", elapsed_time)
+print("Elapsed time: ", elapsed_time)     
 
 # show the plot
 pyplot.show()
