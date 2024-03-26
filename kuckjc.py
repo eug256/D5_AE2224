@@ -6,7 +6,6 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 trai_start = 1
 trai_end = 1000
-trai_end = 100000
 df = parameters(trai_end)
 
 # Initialize NearestNeighbors class
