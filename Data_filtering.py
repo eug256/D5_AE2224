@@ -2,7 +2,7 @@ import sys
 import vallenae as vae
 import pandas as pd
 import numpy as np
-from calculate_parameters import parameters
+from calculate_parameters import parameters_filtering as params
 
 def decide(array):
 
@@ -24,7 +24,7 @@ def decide(array):
 def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
 
     # get raw data and change it to numpy array
-    unfiltered_data = parameters(trai_start, trai_end * 3) 
+    unfiltered_data = params(trai_start, trai_end * 3) # would rather generate dynamically but it takes ages to run
     unfiltered_data = np.array(unfiltered_data)
 
     # deterime the shape of the output array: (desired nr of waveforms, nr of parameters)
@@ -52,6 +52,6 @@ def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
 # data = filter_dataset(1, 5)
 # new_data = np.zeros((5,7))
 
-# data = np.array(parameters(1,5)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
+# data = np.array(params(1,2)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
 # new_data[0] = data[0]
 # print(data)
