@@ -3,11 +3,15 @@ from numpy import unique
 from numpy import where
 from matplotlib import pyplot
 from sklearn.datasets import make_classification
+<<<<<<< Updated upstream
 from sklearn.cluster import AffinityPropagation
 import time
 
 # Start timer
 start_time = time.perf_counter()
+=======
+from sklearn.cluster import AffinityPropagation, k_means
+>>>>>>> Stashed changes
 
 # initialize the data set we'll work with
 training_data = parameters(2700,3000)
@@ -29,6 +33,7 @@ for cluster in clusters:
     index = where(result == cluster)
     # make the plot
     for i in index[0]:
+<<<<<<< Updated upstream
         pyplot.scatter(training_data[i][1], training_data[i][5])
 
 # End timer
@@ -37,6 +42,13 @@ end_time = time.perf_counter()
 # Calculate elapsed time
 elapsed_time = end_time - start_time
 print("Elapsed time: ", elapsed_time)
+=======
+        df=k_means.labels_
+
+        # Plotting resulting clusters
+        colors=['purple','red','blue','green']
+        pyplot.scatter(training_data[i][4], training_data[i][0], c=df['KMeans_labels'],cmap=pyplot.colors.ListedColormap(colors))
+>>>>>>> Stashed changes
 
 # show the plot
 pyplot.show()
