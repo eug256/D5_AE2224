@@ -17,7 +17,7 @@ def parameters(trai_input):
 
     pridb = vae.io.PriDatabase(PRIDB)
     df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
-    fields = ['Amplitude', 'Energy', 'Rise_time', 'Count', 'Max_freq', 'Variance'] 
+    fields = ['Amplitude', 'Energy', 'Rise_time', 'Count', 'Max_freq', 'Variance',"Counts/RT"] 
     total_data = []
 
     for i in df_hits:
@@ -35,7 +35,7 @@ def parameters(trai_input):
                 freq_0.append(freq[j])
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         
-        total_data.append([i[3],i[5],i[9],i[11],max(amplitude_spectrum_0),round(np.var(y)10*10,2)])
+        total_data.append([i[3],i[5],i[9],i[11],max(amplitude_spectrum_0),round(np.var(y)10*10,3)],i[11]/i[9])
     return total_data
 
 """ 
