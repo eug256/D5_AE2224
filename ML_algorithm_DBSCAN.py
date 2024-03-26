@@ -40,3 +40,4 @@ print("Elapsed time: ", elapsed_time)
 
 # show the DBSCAN plot
 pyplot.show()
+print(training_data.shape)
