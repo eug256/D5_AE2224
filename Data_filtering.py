@@ -50,10 +50,11 @@ def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
 
     return filtered_data, i # return filtered array and last trai number in the original dataset
 
-data = filter_dataset(1, 5)
-# new_data = np.zeros((5,7))
+if __name__ == "__main__":
+    data = filter_dataset(1, 5)
+    # new_data = np.zeros((5,7))
 
-new_data = np.array(params(1,5)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
-# new_data[0] = data[0]
-print(data)
-print(new_data)
+    new_data = np.array(params(1,5)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
+    # new_data[0] = data[0]
+    print(data)
+    print(new_data)

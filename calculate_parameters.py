@@ -3,14 +3,14 @@ import vallenae as vae
 import numpy as np
 from scipy.fft import fft, fftfreq
 import csv
-def parameters(trai_start,trai_input):
+def parameters(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
         TRADB = results['tradb']
         PRIDB = results['pridb']
         
     ################## INPUT: ###################
-    trai = [trai_start,trai_input]
+    trai = [trai_start,trai_end]
     #############################################
     trai_min = min(trai)
     trai_max = max(trai)
@@ -38,14 +38,14 @@ def parameters(trai_start,trai_input):
         total_data.append([i[3],i[5],i[9],i[11],max(amplitude_spectrum_0),round(np.var(y)*10**10,3)])
     return total_data
 
-def parameters_filtering(trai_start,trai_input):
+def parameters_filtering(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
         TRADB = results['tradb']
         PRIDB = results['pridb']
         
     ################## INPUT: ###################
-    trai = [trai_start,trai_input]
+    trai = [trai_start,trai_end]
     #############################################
     trai_min = min(trai)
     trai_max = max(trai)
