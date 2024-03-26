@@ -4,6 +4,10 @@ from numpy import where
 from matplotlib import pyplot
 from sklearn.datasets import make_classification
 from sklearn.cluster import DBSCAN
+import time
+
+# Start timer
+start_time = time.perf_counter()
 
 # initialize the data set we'll work with
 training_data=parameters(1000)
@@ -26,5 +30,13 @@ for dbscan_cluster in dbscan_cluster:
     # make the plot
     for i in index[0]:
         pyplot.scatter(training_data[i][4], training_data[i][0])
+
+# End timer
+end_time = time.perf_counter()
+
+# Calculate elapsed time
+elapsed_time = end_time - start_time
+print("Elapsed time: ", elapsed_time)
+
 # show the DBSCAN plot
 pyplot.show()
