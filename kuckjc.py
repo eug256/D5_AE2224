@@ -4,10 +4,9 @@ from matplotlib import pyplot as plt
 import matplotlib
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
-trai_start = 500
-trai_end = 1000
+trai_start = 24000
+trai_end = 25000
 df = parameters(trai_start,trai_end)
-print(df)
 
 # Initialize NearestNeighbors class
 neigh = NearestNeighbors(n_neighbors=2)
