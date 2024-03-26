@@ -5,13 +5,9 @@ import matplotlib
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 trai_start = 1
-trai_end = 10000
+trai_end = 1000
 df = parameters(trai_end)
 
-# Initialize the data set we'll work with
-trai_start = 100
-trai_end = 200
-df = parameters(trai_start,trai_end)
 # Initialize NearestNeighbors class
 neigh = NearestNeighbors(n_neighbors=2)
 nbrs = neigh.fit(df)
