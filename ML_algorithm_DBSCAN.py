@@ -10,7 +10,7 @@ import time
 start_time = time.perf_counter()
 
 # initialize the data set we'll work with
-training_data=parameters(1000)
+training_data=parameters(1,10000)
 # define the model
 dbscan_model = DBSCAN(eps=0.25, min_samples=4)
 
