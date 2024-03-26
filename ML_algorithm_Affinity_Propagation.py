@@ -46,4 +46,3 @@ print("Elapsed time: ", elapsed_time)
 
 # show the plot
 pyplot.show()
-print(training_data.shape)
