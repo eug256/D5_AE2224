@@ -1,7 +1,3 @@
-# to do in this file:
-# - iterate over all the samples
-# - calculate the frequencies
-
 from pathlib import Path
 
 import sys
@@ -15,6 +11,8 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from threading import Thread
+from itertools import chain
 
 # put the pridb and tradb in the same folder as this python file
 
@@ -41,52 +39,93 @@ def fourierT(y,t):
 
     return freq_0, amplitude_spectrum_0
 
+def Calculate(samples):
+    peak_frequencies = []
+        
+    for n in samples:
+        try:
+            df_hits = pridb.iread_hits(query_filter=f"TRAI = {n}")
+            y,t = tradb.read_wave(n)
+            a,b = fourierT(y,t)
+        
+            PeakFreq = a[b.index(max(b))]
+            peak_frequencies.append(PeakFreq)
+        except:
+            peak_frequencies.append(0)
 
-if __name__ == '__main__':
+        if n%1000 == 0:
+            print(n)
+
+    #results[index]= peak_frequencies
+    return peak_frequencies
+            
+def main():
+    #specify time to run in seconds
+    runtime = 10 * 60
 
     first_time = True
-
-    #specify time to run in seconds
-    runtime = 60
-
     start = time.time()
 
     run = True
     while run:
+
         try:
             existing_file = pd.read_csv('peaks.csv')
             last_entry = existing_file["trai"].iloc[-1]
-            samples = range(last_entry+1,last_entry+10001)
+            length = 10000
+            samples = range(last_entry+1,last_entry+1+length)
             first_time = False
         except:
-            samples = range(1,10000)
-            
-        peak_frequencies = []
-        
-        for n in samples:
-            try:
-                df_hits = pridb.iread_hits(query_filter=f"TRAI = {n}")
-            except:
-                run = False
-            y,t = tradb.read_wave(n)
-            
-            a,b = fourierT(y,t)
-            
-            PeakFreq = a[b.index(max(b))]
-            peak_frequencies.append(PeakFreq)
-            
-            if n%1000 == 0:
-                print(n)
-                
+            samples = range(1,10001)
+
+        """
+        nt = 6
+
+        threads = [None]*nt
+        results = [None]*nt
+
+        try:
+            existing_file = pd.read_csv('peaks.csv')
+            last_entry = existing_file["trai"].iloc[-1]
+            samples = []
+            length = 1000
+            for i in range(nt):
+                sample = range(last_entry+1+(i*length),last_entry+1+length+(i*length))
+                samples.append(sample)
+            first_time = False
+        except:
+            samples = []
+            length = 10000
+            for i in range(nt):
+                sample = range(1+(i*length),1+length+(i*length))
+                samples.append(sample)
+
+        for i in range(len(threads)):
+            threads[i] = Thread(target=Calculate, args=(samples[i], results, i))
+            threads[i].start()
+
+        for i in range(len(threads)):
+            threads[i].join()
+
+        peak_frequencies = list(chain(*results))
+
+        samples = list(chain(*samples))
+        """
+
+        peak_frequencies = Calculate(samples)
+
         peak_frequencies = pd.DataFrame({"trai": samples, "peak_frequencies": peak_frequencies})
         if first_time:
             peak_frequencies.to_csv('peaks.csv', mode='a', index=False)
         else:
             peak_frequencies.to_csv('peaks.csv', mode='a', index=False, header=False)
-
+            
         now = time.time()
-        if now-start >= runtime:
+        timeleft = round(runtime - now + start, 1)
+        if timeleft >= 0:
+            print(f"{timeleft}s of runtime left")
+        if timeleft <= 0:
             run = False
 
-
-        
+if __name__ == '__main__':
+        main()
