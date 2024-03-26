@@ -37,14 +37,17 @@ n_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)
 print(cluster_labels)
 colors = ['purple', 'red', 'blue', 'green', 'orange', 'yellow', 'brown', 'black', 'pink', 'gray', 'olive', 'cyan', 'magenta', 'lime', 'teal', 'coral', 'lightblue', 'lightgreen', 'lavender', 'tan', 'salmon', 'gold', 'darkred', 'darkblue', 'darkgreen', 'darkorange', 'darkyellow', 'darkbrown', 'darkpink', 'darkgray', 'darkolive', 'darkcyan', 'darkmagenta', 'darklime', 'darkteal', 'darkcoral', 'darklightblue', 'darklightgreen', 'darklavender', 'darktan', 'darksalmon', 'darkgold']
 
-plt.figure(figsize=(10, 10))
+fig = plt.figure(figsize = (10, 10))
+ax = fig.add_subplot(projection='3d')
+
 for i in range(len(cluster_labels)):
     if cluster_labels[i] == -1:  # Noise points
-        plt.scatter(df[i][4], df[i][0], c='black', marker='x')
+        ax.scatter(df[i][4], df[i][0], df[i][1], s=df[i][3], c='black', marker='x')
     else:
-        plt.scatter(df[i][4], df[i][0], c=cluster_labels[i], cmap=matplotlib.colors.ListedColormap(colors[cluster_labels[i]]))
+        ax.scatter(df[i][4], df[i][0], df[i][1], s=df[i][3], c=cluster_labels[i], cmap=matplotlib.colors.ListedColormap(colors[cluster_labels[i]]))
 
-plt.title(f'DBSCAN Clustering - {n_clusters} clusters found', fontsize=20)
-plt.xlabel('MAX freq (1/Hz)', fontsize=14)
-plt.ylabel('Ampltude (m)', fontsize=14)
+ax.set_xlabel('MAX freq (Hz)', fontsize=11)
+ax.set_ylabel('Ampltude (m)', fontsize=11)
+ax.set_zlabel('Energy (J)', fontsize=11)
+ax.set_title(f'DBSCAN Clustering - {n_clusters} clusters found', fontsize=20)
 plt.show()
