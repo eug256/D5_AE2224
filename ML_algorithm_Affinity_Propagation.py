@@ -10,7 +10,7 @@ import time
 start_time = time.perf_counter()
 
 # initialize the data set we'll work with
-training_data = parameters(1,1000)
+training_data = parameters(2700,3000)
 # define the model
 model = AffinityPropagation(damping=0.7)
 
@@ -29,7 +29,7 @@ for cluster in clusters:
     index = where(result == cluster)
     # make the plot
     for i in index[0]:
-        pyplot.scatter(training_data[i][4], training_data[i][0])
+        pyplot.scatter(training_data[i][1], training_data[i][5])
 
 # End timer
 end_time = time.perf_counter()

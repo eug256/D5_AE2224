@@ -10,7 +10,7 @@ import time
 start_time = time.perf_counter()
 
 # initialize the data set we'll work with
-training_data=parameters(1000)
+training_data=parameters(900,1000)
 # define the model
 dbscan_model = DBSCAN(eps=0.25, min_samples=4)
 
@@ -29,7 +29,7 @@ for dbscan_cluster in dbscan_cluster:
     index = where(dbscan_result == dbscan_cluster)
     # make the plot
     for i in index[0]:
-        pyplot.scatter(training_data[i][4], training_data[i][0])
+        pyplot.scatter(training_data[i][5], training_data[i][6])
 
 # End timer
 end_time = time.perf_counter()
