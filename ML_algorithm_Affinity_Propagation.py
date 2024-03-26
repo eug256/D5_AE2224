@@ -10,7 +10,7 @@ import time
 start_time = time.perf_counter()
 
 # initialize the data set we'll work with
-training_data = parameters(1,3000)
+training_data = parameters(2700,3000)
 # define the model
 model = AffinityPropagation(damping=0.7)
 
