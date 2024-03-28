@@ -6,7 +6,7 @@ import os
 from plotnine import *
 
 HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-DATA = os.path.join(HERE, "1-10000-amp-freq.csv")
+DATA = os.path.join(HERE, "1-100000-amp-freq.csv")
 
 X = pd.read_csv(DATA) # read data
 X_scaled = StandardScaler().fit(X).transform(X) # transform data (standardize so all columns have zero mean and unit variance)
