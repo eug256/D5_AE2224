@@ -56,5 +56,5 @@ if __name__ == "__main__":
 
     new_data = np.array(params(1,5)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
     # new_data[0] = data[0]
-    print(data)
-    print(new_data)
+    # print(data)
+    # print(new_data)
