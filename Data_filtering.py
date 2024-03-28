@@ -9,6 +9,7 @@ def decide(array):
     # features to take into account, maybe change this later if not good
     var = array[5]
     cprt = array[6]
+    counts = array[3]
     # en = array[1]
 
     # look at variance first: hard limit
@@ -16,8 +17,8 @@ def decide(array):
         return False
     
     # now counts/rise time: hard limit
-    if cprt == 0: # change this:
-        return False
+    # if counts == 0: # change this:
+    #     return False
     
     return True
 
@@ -49,9 +50,11 @@ def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
 
     return filtered_data, i # return filtered array and last trai number in the original dataset
 
-# data = filter_dataset(1, 5)
-# new_data = np.zeros((5,7))
+if __name__ == "__main__":
+    data = filter_dataset(1, 5)
+    # new_data = np.zeros((5,7))
 
-# data = np.array(params(1,2)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
-# new_data[0] = data[0]
-print(params(350039,350040))
+    new_data = np.array(params(1,5)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
+    # new_data[0] = data[0]
+    # print(data)
+    # print(new_data)
