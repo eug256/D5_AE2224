@@ -11,13 +11,13 @@ trai_end = 16000
 
 #plotting parameters
 #indices: 0 amplitude, 1 energy, 2 rise time, 3 count, 4 max freq, 5 variance_e10
-elev = 30 #elevation angle
-azim = 45 #azimuthal angle (z-axis rotation)
-xplot = 1
+elev = 80 #elevation angle
+azim = 0 #azimuthal angle (z-axis rotation)
+xplot = 4
 yplot = 0
 zplot = 2
 sizeplot = 5 #4th dimension corresponds to the size of the dot on the graph
-plotting_variables = ['Amplitude', 'Energy', 'Rise time', 'Count', 'Max Frequency', 'Variance e10']
+plotting_variables = ['Amplitude', 'Energy', 'Rise time', 'Count', 'Frequency at max amplitude of FFT', 'Variance e10']
 
 #df = parameters(trai_start,trai_end)
 df = filter_dataset(trai_start,trai_end)[0]
