@@ -153,6 +153,7 @@ class Form(QDialog):
         trai = int(self.edit.text())
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(trai)
+            max_amplitude = max(np.abs(y))
             #print(tradb.columns())
         
         self.graph.clear()  
@@ -192,6 +193,8 @@ class Form(QDialog):
             self.data_array[self.data[13]] = CountsoverlogRiseTime
         
         #print(self.data_array)
+        data_str = QTableWidgetItem(str(max_amplitude))
+        self.table.setItem(3, 1, data_str)
         
         yf = fft(y)
         dt = t[1] - t[0]
