@@ -30,6 +30,7 @@ def parameters(trai_start,trai_input):
         freq_0 = []
         amplitude_spectrum_0 = []
         amplitude_spectrum = 2*np.abs(yf)
+
         for j in range(len(freq)):
             if freq[j] >= 0:
                 freq_0.append(freq[j])
@@ -58,7 +59,9 @@ def parameters_filtering(trai_start,trai_input):
     for i in df_hits:
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(i[12])
-            
+
+
+        max_amplitude = max(np.abs(y))
         yf = fft(y)
         dt = t[1] - t[0]
         freq = fftfreq(len(y), dt)
@@ -70,7 +73,7 @@ def parameters_filtering(trai_start,trai_input):
                 freq_0.append(freq[j])
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         
-        total_data.append([i[3],i[5],i[9],i[11],max(amplitude_spectrum_0),round(np.var(y)*10**10,3),i[11]/i[9]])
+        total_data.append([max_amplitude,i[5],i[9],i[11],max(amplitude_spectrum_0),round(np.var(y)*10**10,3),i[11]/i[9]])
     return total_data
 """ 
 with open(f'{trai_min}-{trai_max}.csv', 'w', newline='') as f:
