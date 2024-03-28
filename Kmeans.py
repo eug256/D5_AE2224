@@ -1,15 +1,23 @@
-import cowsay
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
+import os
+from plotnine import *
 
-X = [0, 1] # get some array
+HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
+DATA = os.path.join(HERE, "1-10000-amp-freq.csv")
 
-# split into train and test here
+X = pd.read_csv(DATA) # read data
+X_scaled = StandardScaler().fit(X).transform(X) # transform data (standardize so all columns have zero mean and unit variance)
 
-# kmeans = KMeans(n_clusters = 3, random_state = 0, n_init= "auto").fit(X_train)
+kmeans = KMeans(n_clusters = 4, random_state = 0, n_init= "auto").fit(X) # apply kmeans
 
-# y = kmeans.predict
+X['_cluster'] = pd.Categorical(kmeans.labels_) # read clusters from kmeans
 
-
-print(cowsay.cow("Fuck"))
+p = ( 
+    ggplot(X, aes('frequency', 'amplitude', color = '_cluster')) +\
+    geom_point() +\
+    labs(title = "Cluster by amplitude and frequency, k=4")
+)
+print(p) # plot clusters
