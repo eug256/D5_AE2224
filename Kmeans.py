@@ -11,7 +11,7 @@ DATA = os.path.join(HERE, "1-10000-amp-freq.csv")
 X = pd.read_csv(DATA) # read data
 X_scaled = StandardScaler().fit(X).transform(X) # transform data (standardize so all columns have zero mean and unit variance)
 
-kmeans = KMeans(n_clusters = 4, random_state = 0, n_init= "auto").fit(X) # apply kmeans
+kmeans = KMeans(n_clusters = 4, random_state = 0, n_init= "auto").fit(X_scaled) # apply kmeans
 
 X['_cluster'] = pd.Categorical(kmeans.labels_) # read clusters from kmeans
 
