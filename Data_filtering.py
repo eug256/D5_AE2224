@@ -3,6 +3,7 @@ import vallenae as vae
 import pandas as pd
 import numpy as np
 from calculate_parameters import parameters_filtering as params
+from timer import Timer
 
 def decide(array):
 
@@ -23,6 +24,9 @@ def decide(array):
     return True
 
 def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
+    t = Timer()
+    start = t.start()
+    
 
     # get raw data and change it to numpy array
     unfiltered_data = params(trai_start, trai_end * 3) # would rather generate dynamically but it takes ages to run
@@ -47,6 +51,9 @@ def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
             i+=1
         if current_trai == nr_trai:
             break
+    
+    stop = t.stop()
+    print(start - stop)
 
     return filtered_data, i # return filtered array and last trai number in the original dataset
 
