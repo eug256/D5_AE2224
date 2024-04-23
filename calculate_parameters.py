@@ -3,7 +3,7 @@ import vallenae as vae
 import numpy as np
 from scipy.fft import fft, fftfreq
 import csv
-def parameters(trai_start,trai_end):
+def parameters(trai_start, trai_end):
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
         TRADB = results['tradb']

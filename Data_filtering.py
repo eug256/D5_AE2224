@@ -3,59 +3,53 @@ import vallenae as vae
 import pandas as pd
 import numpy as np
 from calculate_parameters import parameters_filtering as params
-from timer import Timer
 
-def decide(array):
+# def decide(array):
 
     # features to take into account, maybe change this later if not good
-    var = array[5]
-    cprt = array[6]
-    counts = array[3]
+    # var = array[5]
+    # cprt = array[6]
+    # counts = array[3]
     # en = array[1]
 
     # look at variance first: hard limit
-    if var < 8:
-        return False
+    # if var < 8:
+    #     return False
     
     # now counts/rise time: hard limit
     # if counts == 0: # change this:
     #     return False
     
-    return True
+    # return True
 
 def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
-    t = Timer()
-    start = t.start()
-    
 
     # get raw data and change it to numpy array
-    unfiltered_data = params(trai_start, trai_end * 3) # would rather generate dynamically but it takes ages to run
+    unfiltered_data = params(trai_start, trai_end) # would rather generate dynamically but it takes ages to run
     unfiltered_data = np.array(unfiltered_data)
+    #test
 
     # deterime the shape of the output array: (desired nr of waveforms, nr of parameters)
-    nr_param = unfiltered_data.shape[1]
-    nr_trai = trai_end - trai_start + 1
+    # nr_param = unfiltered_data.shape[1]
+    # nr_trai = trai_end - trai_start + 1
 
     # generate array for filtered data
-    filtered_data = np.zeros((nr_trai, nr_param))
+    # filtered_data = np.zeros((nr_trai, nr_param))
 
-    current_trai = 0
-    i = 1
-    while True:
-        array = unfiltered_data[i]
-        if decide(array) == False:
-            i+=1
-        else:
-            filtered_data[current_trai] = array
-            current_trai+=1
-            i+=1
-        if current_trai == nr_trai:
-            break
-    
-    stop = t.stop()
-    print(start - stop)
+    # current_trai = 0
+    # i = 1
+    # while True:
+    #     array = unfiltered_data[i]
+    #     if decide(array) == False:
+    #         i+=1
+    #     else:
+    #         filtered_data[current_trai] = array
+    #         current_trai+=1
+    #         i+=1
+    #     if current_trai == nr_trai:
+    #         break
 
-    return filtered_data, i # return filtered array and last trai number in the original dataset
+    return unfiltered_data # return filtered array and last trai number in the original dataset
 
 if __name__ == "__main__":
     data = filter_dataset(1, 5)
