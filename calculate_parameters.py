@@ -60,7 +60,6 @@ def parameters_filtering(trai_start,trai_end):
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(i[12])
 
-
         max_amplitude = max(np.abs(y))
         yf = fft(y)
         dt = t[1] - t[0]
