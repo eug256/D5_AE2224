@@ -74,14 +74,6 @@ def parameters_filtering(trai_start,trai_end):
         
         total_data.append([max_amplitude,i[5],i[9],i[11],freq_0[np.argmax(amplitude_spectrum_0)],round(np.var(y)*10**10,3),i[11]/i[9]])
     return total_data
-""" 
-with open(f'{trai_min}-{trai_max}.csv', 'w', newline='') as f:
-    # using csv.writer method from CSV package
-    write = csv.writer(f)
-     
-    write.writerow(fields)
-    write.writerows(total_data)
-"""  
 
 def calculate_stuff(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
@@ -117,4 +109,4 @@ def calculate_stuff(trai_start,trai_end):
         write.writerow(['amplitude','frequency'])
         write.writerows(total_data)
 
-calculate_stuff(1,10000)
+calculate_stuff(1,100000)
