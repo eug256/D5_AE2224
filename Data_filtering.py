@@ -11,12 +11,16 @@ def decide(array):
     # features to take into account, maybe change this later if not good
     var = array[7]
     counts = array[6]
+    energy = array[3]
     # look at variance first: hard limit
     if var < 8:
         return False
     
     # now counts/rise time: hard limit
     if counts == 0: # change this:
+        return False
+    
+    if energy < 40:
         return False
     
     return True
