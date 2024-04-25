@@ -16,6 +16,12 @@ pca = PCA(n_components=8)
 
 #fit PCA model to data
 pca_fit = pca.fit(X_scaled)
+pca_transform = pca_fit.transform(X_scaled)
+
+pca_fit_transform = pca.fit_transform(X_scaled)
+df = pd.DataFrame(pca_fit_transform)
+df2 = df.iloc[:, : 5]
+df2.to_csv("1-10000-full-pca.csv",index=False)
 
 PC_values = np.arange(pca.n_components_) + 1
 plt.plot(PC_values, pca.explained_variance_ratio_, 'o-', linewidth=2, color='blue')
