@@ -104,7 +104,7 @@ def calculate_stuff(trai_start,trai_end):
                 freq_0.append(freq[j])
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         
-        total_data.append([i[3],freq_0[np.argmax(amplitude_spectrum_0)],i[4],i[5],i[6],i[9],i[11]])
+        total_data.append([max(np.abs(y)),freq_0[np.argmax(amplitude_spectrum_0)],i[4],i[5],i[6],i[9],i[11]])
     
     with open(f'{trai_min}-{trai_max}-full.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
