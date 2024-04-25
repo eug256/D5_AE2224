@@ -15,7 +15,7 @@ X = pd.read_csv(DATA) # read data
 #X = X.loc[(X['frequency'] >= 125000) & (X['frequency'] <= 150000)]
 X_scaled = StandardScaler().fit(X).transform(X)
 
-EPS=21
+EPS=20
 SAMPLES=15
 
 neighbors = NearestNeighbors(n_neighbors=SAMPLES)
@@ -26,7 +26,7 @@ distances = np.sort(distances, axis=0)
 distances = distances[:,1]
 plt.plot(distances)
 
-db = DBSCAN(eps=EPS, min_samples=SAMPLES).fit(X)
+db = DBSCAN(eps=EPS, min_samples=SAMPLES).fit(X_scaled[:, :6])
 labels = db.labels_
 X["_labels"] = db.labels_
 n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
