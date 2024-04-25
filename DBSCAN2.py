@@ -9,14 +9,14 @@ import numpy as np
 
 
 HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-DATA = os.path.join(HERE, "1-10000-amp-freq.csv")
+DATA = os.path.join(HERE, "1-10000-full.csv")
 
 X = pd.read_csv(DATA) # read data
 #X = X.loc[(X['frequency'] >= 125000) & (X['frequency'] <= 150000)]
 X_scaled = StandardScaler().fit(X).transform(X)
 
-EPS=25
-SAMPLES=15
+EPS=17
+SAMPLES=21
 
 neighbors = NearestNeighbors(n_neighbors=SAMPLES)
 neighbors_fit = neighbors.fit(X)

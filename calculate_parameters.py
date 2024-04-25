@@ -3,6 +3,8 @@ import vallenae as vae
 import numpy as np
 from scipy.fft import fft, fftfreq
 import csv
+import os
+import pandas as pd
 def parameters(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
@@ -102,13 +104,23 @@ def calculate_stuff(trai_start,trai_end):
                 freq_0.append(freq[j])
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         
-        total_data.append([max(np.abs(y)),freq_0[np.argmax(amplitude_spectrum_0)],i[5],i[6],i[9]])
+        total_data.append([i[3],freq_0[np.argmax(amplitude_spectrum_0)],i[4],i[5],i[6],i[9],i[11]])
     
-    with open(f'{trai_min}-{trai_max}-amp-freq.csv', 'w', newline='') as f:
+    with open(f'{trai_min}-{trai_max}-full.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
         write = csv.writer(f)
         
-        write.writerow(['amplitude','frequency','energy','rms','rise_time'])
+        write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts'])
         write.writerows(total_data)
 
-calculate_stuff(1,10000)
+def calc_counts_per_rise_time():
+    HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
+    DATA = os.path.join(HERE, "1-10000-full.csv")
+
+    df = pd.read_csv(DATA) # read data
+    df = df.assign(cprt=df["counts"]/df["rise_time"])
+    df.to_csv("1-10000-full.csv",index=False)
+
+if __name__ == '__main__':
+    calculate_stuff(1,10000)
+    calc_counts_per_rise_time()
