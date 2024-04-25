@@ -113,14 +113,14 @@ def calculate_stuff(trai_start,trai_end):
         write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts'])
         write.writerows(total_data)
 
-def calc_counts_per_rise_time():
+def calc_counts_per_rise_time(trai_min,trai_max):
     HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-    DATA = os.path.join(HERE, "1-10000-full.csv")
+    DATA = os.path.join(HERE, f"{trai_min}-{trai_max}-full.csv")
 
     df = pd.read_csv(DATA) # read data
     df = df.assign(cprt=df["counts"]/df["rise_time"])
-    df.to_csv("1-10000-full.csv",index=False)
+    df.to_csv(f"{trai_min}-{trai_max}-full.csv",index=False)
 
 if __name__ == '__main__':
-    calculate_stuff(1,10000)
-    calc_counts_per_rise_time()
+    #calculate_stuff(1,100000)
+    calc_counts_per_rise_time(1,100000)

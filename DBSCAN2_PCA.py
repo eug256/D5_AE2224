@@ -9,16 +9,16 @@ import numpy as np
 
 
 HERE = os.path.dirname(__file__) if "__file__" in locals() else os.getcwd()
-DATA = os.path.join(HERE, "1-10000-full-pca.csv")
-DATA2 = os.path.join(HERE, "1-10000-full.csv")
+DATA = os.path.join(HERE, "1-100000-full-pca.csv")
+DATA2 = os.path.join(HERE, "1-100000-full.csv")
 
 X2 = pd.read_csv(DATA2) # read data
 X = pd.read_csv(DATA) # read data
 #X = X.loc[(X['frequency'] >= 125000) & (X['frequency'] <= 150000)]
 X_scaled = StandardScaler().fit(X).transform(X)
 
-EPS=0.466
-SAMPLES=10
+EPS=0.280
+SAMPLES=16
 
 neighbors = NearestNeighbors(n_neighbors=SAMPLES)
 neighbors_fit = neighbors.fit(X)
@@ -39,7 +39,7 @@ print("Estimated number of noise points: %d" % n_noise_)
 print(X['_labels'])
 
 X2 = X2.assign(_labels=X['_labels'])
-#X = X.loc[(X['_labels'] >= 0)]
+#X2 = X2.loc[(X2['_labels'] >= 0)]
 
 plot = ( 
     ggplot(X2, aes('frequency', 'amplitude', color = '_labels')) +\
