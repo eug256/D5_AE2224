@@ -75,15 +75,21 @@ def calculate_stuff(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
         results = yaml.safe_load(file)
         TRADB = results['tradb']
+        PRIDB = results['pridb']
 
     trai_min = trai_start
     trai_max = trai_end
+    
+    pridb = vae.io.PriDatabase(PRIDB)
+    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
 
     total_data = []
 
-    for trai in range(trai_start,trai_end+1):
+    for i in df_hits:
+        print(i)
         with vae.io.TraDatabase(TRADB) as tradb:
-            y, t = tradb.read_wave(trai)
+            y, t = tradb.read_wave(int(i[12]))
+    
             
         yf = fft(y)
         dt = t[1] - t[0]
@@ -96,13 +102,13 @@ def calculate_stuff(trai_start,trai_end):
                 freq_0.append(freq[j])
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         
-        total_data.append([max(np.abs(y)),freq_0[np.argmax(amplitude_spectrum_0)]])
+        total_data.append([max(np.abs(y)),freq_0[np.argmax(amplitude_spectrum_0)],i[5],i[6],i[9]])
     
     with open(f'{trai_min}-{trai_max}-amp-freq.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
         write = csv.writer(f)
         
-        write.writerow(['amplitude','frequency'])
+        write.writerow(['amplitude','frequency','energy','rms','rise_time'])
         write.writerows(total_data)
 
-#calculate_stuff(1,100000)
+calculate_stuff(1,10000)

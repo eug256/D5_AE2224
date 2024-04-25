@@ -11,13 +11,13 @@ DATA = os.path.join(HERE, "1-100000-amp-freq.csv")
 X = pd.read_csv(DATA) # read data
 X_scaled = StandardScaler().fit(X).transform(X) # transform data (standardize so all columns have zero mean and unit variance)
 
-kmeans = KMeans(n_clusters = 4, random_state = 0, n_init= "auto").fit(X_scaled) # apply kmeans
+kmeans = KMeans(n_clusters = 9, random_state = 0, n_init= "auto").fit(X_scaled) # apply kmeans
 
 X['_cluster'] = pd.Categorical(kmeans.labels_) # read clusters from kmeans
 
 p = ( 
     ggplot(X, aes('frequency', 'amplitude', color = '_cluster')) +\
     geom_point() +\
-    labs(title = "Cluster by amplitude and frequency, k=4")
+    labs(title = "Cluster by amplitude and frequency, k=9")
 )
 print(p) # plot clusters

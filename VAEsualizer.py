@@ -76,7 +76,7 @@ class Form(QDialog):
 
     def create_empty_table(self):
         self.data = ["time", "channel", "param id", "amplitude", "duration", "energy", "rms", "set id", "threshold", "rise time", "signal strength", "counts", "variance E10", "Counts/log(RT e4)"]
-        unit = ["s", "-", "-", "µV", "µs", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "N/dB"]
+        unit = ["s", "-", "-", "µV", "s", "eu", "µV", "-", "µV", "µs", "nVs", "-", "µV2", "N/dB"]
         self.table.setRowCount(14)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Data", "Value", "Unit"])
@@ -206,6 +206,11 @@ class Form(QDialog):
             if freq[i] >= 0:
                 freq_0.append(freq[i])
                 amplitude_spectrum_0.append(amplitude_spectrum[i])
+                
+        yf = fft(y)
+        xf = fftfreq(len(t), dt)[:len(t)//2]
+        freq_0 = xf
+        amplitude_spectrum_0 = 2.0/len(t) * np.abs(yf[0:len(t)//2])
 
         # Create a new PlotWidget for frequency plot
         freq_graph = pg.PlotWidget()
