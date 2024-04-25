@@ -1,58 +1,73 @@
-import sys
+import yaml
 import vallenae as vae
-import pandas as pd
 import numpy as np
-from calculate_parameters import parameters_filtering as params
+from scipy.fft import fft, fftfreq
+import csv
+import os
+import pandas as pd
 
-# def decide(array):
+def decide(array):
 
     # features to take into account, maybe change this later if not good
-    # var = array[5]
-    # cprt = array[6]
-    # counts = array[3]
-    # en = array[1]
-
+    var = array[7]
+    counts = array[6]
     # look at variance first: hard limit
-    # if var < 8:
-    #     return False
+    if var < 8:
+        return False
     
     # now counts/rise time: hard limit
-    # if counts == 0: # change this:
-    #     return False
+    if counts == 0: # change this:
+        return False
     
-    # return True
+    return True
 
-def filter_dataset(trai_start, trai_end, previous_last_trai = 1):
+def calc_filter_data(trai_start,trai_end):
+    with open('settings.yml', 'r') as file:
+        results = yaml.safe_load(file)
+        TRADB = results['tradb']
+        PRIDB = results['pridb']
 
-    # get raw data and change it to numpy array
-    unfiltered_data = params(trai_start, trai_end) # would rather generate dynamically but it takes ages to run
-    unfiltered_data = np.array(unfiltered_data)
-    #test
+    trai_min = trai_start
+    trai_max = trai_end
+    
+    pridb = vae.io.PriDatabase(PRIDB)
+    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
 
-    # deterime the shape of the output array: (desired nr of waveforms, nr of parameters)
-    # nr_param = unfiltered_data.shape[1]
-    # nr_trai = trai_end - trai_start + 1
+    total_data = []
 
-    # generate array for filtered data
-    # filtered_data = np.zeros((nr_trai, nr_param))
+    for i in df_hits:
+        #print(i)
+        with vae.io.TraDatabase(TRADB) as tradb:
+            y, t = tradb.read_wave(int(i[12]))
+    
+            
+        yf = fft(y)
+        dt = t[1] - t[0]
+        freq = fftfreq(len(y), dt)
+        freq_0 = []
+        amplitude_spectrum_0 = []
+        amplitude_spectrum = 2*np.abs(yf)
+        for j in range(len(freq)):
+            if freq[j] >= 0:
+                freq_0.append(freq[j])
+                amplitude_spectrum_0.append(amplitude_spectrum[j])
+        variance = round(np.var(y) * 10**10)
+        feature_array = [max(np.abs(y)), freq_0[np.argmax(amplitude_spectrum_0)], i[4], i[5], i[6], i[9], i[11], variance]
 
-    # current_trai = 0
-    # i = 1
-    # while True:
-    #     array = unfiltered_data[i]
-    #     if decide(array) == False:
-    #         i+=1
-    #     else:
-    #         filtered_data[current_trai] = array
-    #         current_trai+=1
-    #         i+=1
-    #     if current_trai == nr_trai:
-    #         break
+        if decide(feature_array) is True:
+            total_data.append(feature_array)
+    
+    with open(f'{trai_min}-{trai_max}-filtered.csv', 'w', newline='') as f:
+    # using csv.writer method from CSV package
+        write = csv.writer(f)
+        
+        write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts'])
+        write.writerows(total_data)
 
-    return unfiltered_data # return filtered array and last trai number in the original dataset
+calc_filter_data(1,10000)
 
-if __name__ == "__main__":
-    data = filter_dataset(1, 5)
+# if __name__ == "__main__":
+    # data = filter_dataset(1, 5)
     # new_data = np.zeros((5,7))
 
     # new_data = np.array(params(1,2)) # [amplitude, energy, rise time, counts, max amplitude in the freq spectrum, variance, counts/rise time]
