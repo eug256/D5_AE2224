@@ -61,7 +61,7 @@ def calc_filter_data(trai_start,trai_end):
     # using csv.writer method from CSV package
         write = csv.writer(f)
         
-        write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts'])
+        write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts', 'variance'])
         write.writerows(total_data)
 
 calc_filter_data(1,10000)
