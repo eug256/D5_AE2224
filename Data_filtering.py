@@ -12,15 +12,9 @@ def decide(array):
     var = array[7]
     counts = array[6]
     energy = array[3]
-    # look at variance first: hard limit
-    if var < 8:
-        return False
-    
-    # now counts/rise time: hard limit
-    if counts == 0: # change this:
-        return False
-    
-    if energy < 40:
+
+    # look at counts:
+    if counts < 3: # change this:
         return False
     
     return True
@@ -38,7 +32,8 @@ def calc_filter_data(trai_start,trai_end):
     df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
 
     total_data = []
-
+    counter = trai_start
+    counter_list =[]
     for i in df_hits:
         #print(i)
         with vae.io.TraDatabase(TRADB) as tradb:
@@ -57,9 +52,13 @@ def calc_filter_data(trai_start,trai_end):
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         variance = round(np.var(y) * 10**10)
         feature_array = [max(np.abs(y)), freq_0[np.argmax(amplitude_spectrum_0)], i[4], i[5], i[6], i[9], i[11], variance]
-
+        
         if decide(feature_array) is True:
             total_data.append(feature_array)
+            counter_list.append(counter)
+        counter +=1
+
+    print(counter_list)
     
     with open(f'{trai_min}-{trai_max}-filtered.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
@@ -68,7 +67,7 @@ def calc_filter_data(trai_start,trai_end):
         write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts', 'variance'])
         write.writerows(total_data)
 
-calc_filter_data(1,10000)
+calc_filter_data(350000,350100)
 
 # if __name__ == "__main__":
     # data = filter_dataset(1, 5)
