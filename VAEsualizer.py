@@ -38,16 +38,24 @@ class Form(QDialog):
         self.create_enter_trai()
         self.create_left_side()
         self.style_graph()
+        self.style_freq_graph()
+        self.style_count_graph()
 
         # Create a layout for frequency plot
         self.freq_layout = QVBoxLayout()
         self.freq_layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.count_layout = QVBoxLayout()
+        self.count_layout.setContentsMargins(0,0,0,0)
+        
+        
 
         # Create main layout
         main_layout = QGridLayout()
         main_layout.addWidget(self._database_select, 0, 0, 1, 4)
-        main_layout.addWidget(self.graph, 1, 1)
-        main_layout.addWidget(self._left_side, 1, 0)
+        #self.graph_grid = QGridLayout()
+        main_layout.addLayout(self.graph_grid, 1, 1,1,3)
+        main_layout.addWidget(self._left_side, 1, 0,1,1)
         main_layout.setColumnStretch(0, 0)
         main_layout.setColumnStretch(1, 20)
 
@@ -61,10 +69,13 @@ class Form(QDialog):
 
     def create_bunch_of_stuff(self):
         frame_style = QFrame.Sunken | QFrame.Panel
+        self.graph_grid = QGridLayout()
         self.edit = QLineEdit()
         self.button = QPushButton("Show TRAI")
         self.table = QTableWidget()
         self.graph = pg.PlotWidget()
+        self.freq_graph = pg.PlotWidget()
+        self.count_graph = pg.PlotWidget()
         self._open_tradb_label = QLabel()
         self._open_tradb_label.setText(self._tradb_file_location)
         self._open_tradb_label.setFrameStyle(frame_style)
@@ -135,6 +146,23 @@ class Form(QDialog):
         self.graph.setLabel('left', "<font color='blue'>Amplitude", "V")
         self.graph.setLabel('bottom', "<font color='blue'>Time", "s")
         self.graph.showGrid(x=True, y=True)
+        self.graph_grid.addWidget(self.graph,0,0)
+        
+    def style_freq_graph(self):
+        self.freq_graph.setBackground('w')
+        self.freq_graph.setTitle("Amplitude VS Frequency", color=(255,0,0), size="20px")
+        self.freq_graph.setLabel('left', "<font color='blue'>Amplitude", "V")
+        self.freq_graph.setLabel('bottom', "<font color='blue'>Frequency", "Hz")
+        self.freq_graph.showGrid(x=True, y=True)
+        self.graph_grid.addWidget(self.freq_graph,0,1)
+        
+    def style_count_graph(self):
+        self.count_graph.setBackground('w')
+        self.count_graph.setTitle("Count VS Time", color=(255,0,0), size="20px")
+        self.count_graph.setLabel('left', "<font color='blue'>Count", "-")
+        self.count_graph.setLabel('bottom', "<font color='blue'>Time", "s")
+        self.count_graph.showGrid(x=True, y=True)
+        self.graph_grid.addWidget(self.count_graph,0,2)
         
     def convert_to_db(self, x):
         self.graph.setLabel('left', "<font color='blue'>Amplitude", "dBV")
@@ -151,9 +179,19 @@ class Form(QDialog):
         PRIDB = self._pridb_file_location
         TRADB = self._tradb_file_location
         trai = int(self.edit.text())
+        cum_counts = []
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(trai)
+            data_idk = tradb.iread(trai=trai)
+            for data in data_idk:
+                treshold = data[4]
             max_amplitude = max(np.abs(y))
+            i = 0
+            for j in range(len(y)):
+                if y[j] >= treshold and y[j-1] < treshold:
+                    i += 1
+                cum_counts.append(i)
+                
             #print(tradb.columns())
         
         self.graph.clear()  
@@ -213,21 +251,27 @@ class Form(QDialog):
         amplitude_spectrum_0 = 2.0/len(t) * np.abs(yf[0:len(t)//2])
 
         # Create a new PlotWidget for frequency plot
-        freq_graph = pg.PlotWidget()
-        freq_graph.setBackground('w')
-        freq_graph.setTitle("Amplitude VS Frequency", color=(255,0,0), size="20px")
-        freq_graph.setLabel('left', "<font color='blue'>Amplitude", "V")
-        freq_graph.setLabel('bottom', "<font color='blue'>Frequency", "Hz")
-        freq_graph.showGrid(x=True, y=True)
-        freq_graph.plot(freq_0, amplitude_spectrum_0, pen=self.pen_main)
+        self.freq_graph.clear()
+        
+        self.freq_graph.plot(freq_0, amplitude_spectrum_0, pen=self.pen_main)
+        self.freq_graph.addLegend()
+        
+        self.count_graph.clear()
+        self.count_graph.plot(t, cum_counts, pen=self.pen_main)
+        self.count_graph.addLegend()
 
-        # Clear the layout and add the frequency PlotWidget
-        for i in reversed(range(self.freq_layout.count())): 
-            self.freq_layout.itemAt(i).widget().setParent(None) 
-        self.freq_layout.addWidget(freq_graph)
+        # # Clear the layout and add the frequency PlotWidget
+        # for i in reversed(range(self.freq_layout.count())): 
+        #     self.freq_layout.itemAt(i).widget().setParent(None) 
+        # self.freq_layout.addWidget(self.freq_graph)
+        
+        # for i in reversed(range(self.count_layout.count())): 
+        #     self.count_layout.itemAt(i).widget().setParent(None) 
+        # self.count_layout.addWidget(self.count_graph)
 
         # Refresh the main layout
-        self.layout().addLayout(self.freq_layout, 1, 2)
+        #self.graph_grid.addWidget(self.count_graph, 0, 1)
+        #self.graph_grid.addWidget(self.freq_graph, 0, 2)
 
     @Slot()
     def set_open_tradb(self):
