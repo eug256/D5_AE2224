@@ -5,6 +5,8 @@ from scipy.fft import fft, fftfreq
 import csv
 import os
 import pandas as pd
+import matplotlib.pyplot as plt
+import time
 
 def decide(array):
 
@@ -29,16 +31,16 @@ def calc_filter_data(trai_start,trai_end):
     trai_max = trai_end
     
     pridb = vae.io.PriDatabase(PRIDB)
-    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_min} AND TRAI <= {trai_max}")
+    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_start} AND TRAI <= {trai_end}")
 
     total_data = []
     counter = trai_start
     counter_list =[]
+
     for i in df_hits:
         #print(i)
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(int(i[12]))
-    
             
         yf = fft(y)
         dt = t[1] - t[0]
@@ -60,6 +62,7 @@ def calc_filter_data(trai_start,trai_end):
 
     print(counter_list)
     
+    
     with open(f'{trai_min}-{trai_max}-filtered.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
         write = csv.writer(f)
@@ -67,7 +70,80 @@ def calc_filter_data(trai_start,trai_end):
         write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts', 'variance'])
         write.writerows(total_data)
 
-calc_filter_data(350000,350100)
+def calc_variance(trai_start,trai_end):
+
+    with open('settings.yml', 'r') as file:
+        results = yaml.safe_load(file)
+        TRADB = results['tradb']
+        PRIDB = results['pridb']
+    
+    pridb = vae.io.PriDatabase(PRIDB)
+    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_start} AND TRAI <= {trai_end}")
+
+    var = []
+
+    time0 = time.time()
+
+    for i in df_hits:
+        with vae.io.TraDatabase(TRADB) as tradb:
+            y, t = tradb.read_wave(int(i[12]))
+
+        variance = np.var(y) * 10**10
+        if i[11] >= 3:
+            var.append(variance)
+
+    time1 = time.time()
+
+    print("Mean variance: ", np.mean(var))
+    print("variance calculation took: ", round(time1-time0), "[seconds]")
+    print("30th percentile: ", np.percentile(var,30))
+
+    return var
+
+def calc_energy(trai_start,trai_end):
+
+    with open('settings.yml', 'r') as file:
+        results = yaml.safe_load(file)
+        TRADB = results['tradb']
+        PRIDB = results['pridb']
+    
+    pridb = vae.io.PriDatabase(PRIDB)
+    df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_start} AND TRAI <= {trai_end}")
+
+    E = []
+
+    for i in df_hits:
+        if i[11] >= 3:
+            E.append(i[5])
+    
+    print(len(E))
+    tp = np.percentile(E,30)
+    return tp
+
+
+#calc_filter_data(1,100)
+
+print(calc_energy(1, 15400000))
+
+#the thirtieth percentile of all the waves (up to 15.4 million) is 85.15572
+
+
+    
+"""
+plt.figure(figsize=(30,20))
+
+for n in range(1,16):
+    #var = calc_variance(n*mil,n*mil+sample_size)
+    E = calc_energy(n*mil,n*mil+sample_size)
+    plt.subplot(5,3,n)
+    plt.title(f"{n}")
+    plt.xlim(0,3000)
+    print(n)
+    plt.hist(E,50)
+
+plt.show()
+
+"""
 
 # if __name__ == "__main__":
     # data = filter_dataset(1, 5)
