@@ -15,10 +15,10 @@ X = pd.read_csv(DATA) # read data
 
 #X = X.loc[(X['frequency'] >= 125000) & (X['frequency'] <= 150000)]
 X_scaled = StandardScaler().fit(X).transform(X)
-X_scaled = X_scaled[:, : 5]
-print(X_scaled)
+X_scaled = X_scaled[:, : 6]
+#print(X_scaled)
 
-SAMPLES=10
+SAMPLES=7
 
 neighbors = NearestNeighbors(n_neighbors=SAMPLES)
 neighbors_fit = neighbors.fit(X_scaled)
