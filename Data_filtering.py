@@ -11,15 +11,15 @@ import time
 def decide(array):
 
     # features to take into account, maybe change this later if not good
-    var = array[7]
-    counts = array[6]
-    energy = array[3]
+    #var = array[7]
+    counts = array[0]
+    energy = array[1]
 
     # look at counts:
-    if counts < 3: # change this:
+    if counts >= 3 and energy >= 85.15572: # change this:
+        return True
+    else:
         return False
-    
-    return True
 
 def calc_filter_data(trai_start,trai_end):
     with open('settings.yml', 'r') as file:
@@ -31,14 +31,19 @@ def calc_filter_data(trai_start,trai_end):
     trai_max = trai_end
     
     pridb = vae.io.PriDatabase(PRIDB)
+    #df_hits = pridb.iread_hits()
     df_hits = pridb.iread_hits(query_filter=f"TRAI >= {trai_start} AND TRAI <= {trai_end}")
+
+    time0 = time.time()
 
     total_data = []
     counter = trai_start
     counter_list =[]
 
+
     for i in df_hits:
         #print(i)
+        """
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(int(i[12]))
             
@@ -54,21 +59,26 @@ def calc_filter_data(trai_start,trai_end):
                 amplitude_spectrum_0.append(amplitude_spectrum[j])
         variance = round(np.var(y) * 10**10)
         feature_array = [max(np.abs(y)), freq_0[np.argmax(amplitude_spectrum_0)], i[4], i[5], i[6], i[9], i[11], variance]
+        """
+        feature_array = [i[11],i[5],i[12]]
         
-        if decide(feature_array) is True:
+        if decide(feature_array) == True:
             total_data.append(feature_array)
             counter_list.append(counter)
         counter +=1
+        if counter%100000 == 0:
+            print(counter)
 
-    print(counter_list)
-    
+    time1 = time.time()
     
     with open(f'{trai_min}-{trai_max}-filtered.csv', 'w', newline='') as f:
     # using csv.writer method from CSV package
         write = csv.writer(f)
         
-        write.writerow(['amplitude','frequency','duration','energy','rms','rise_time','counts', 'variance'])
+        write.writerow(['counts','energy','trai'])
         write.writerows(total_data)
+    
+    print(round(time1-time0))
 
 def calc_variance(trai_start,trai_end):
 
@@ -82,8 +92,6 @@ def calc_variance(trai_start,trai_end):
 
     var = []
 
-    time0 = time.time()
-
     for i in df_hits:
         with vae.io.TraDatabase(TRADB) as tradb:
             y, t = tradb.read_wave(int(i[12]))
@@ -92,10 +100,7 @@ def calc_variance(trai_start,trai_end):
         if i[11] >= 3:
             var.append(variance)
 
-    time1 = time.time()
-
     print("Mean variance: ", np.mean(var))
-    print("variance calculation took: ", round(time1-time0), "[seconds]")
     print("30th percentile: ", np.percentile(var,30))
 
     return var
@@ -120,12 +125,11 @@ def calc_energy(trai_start,trai_end):
     tp = np.percentile(E,30)
     return tp
 
-
-#calc_filter_data(1,100)
-
-print(calc_energy(1, 15400000))
+calc_filter_data(1,15400000)
 
 #the thirtieth percentile of all the waves (up to 15.4 million) is 85.15572
+
+
 
 
     
